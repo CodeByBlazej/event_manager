@@ -1,5 +1,7 @@
 require 'csv'
 
+puts 'EventManager initialized.'
+
 contents = File.read('event_attendees.csv')
 puts contents
 
@@ -14,8 +16,13 @@ lines.each_with_index do |line,index|
 end
 
 
-contents = CSV.open('event_attendees.csv', headers: true)
+contents = CSV.open(
+  'event_attendees.csv',
+  headers: true,
+  header_converters: :symbol
+)
+
 contents.each do |row|
-  name = row[2]
+  name = row[:first_name]
   puts name
 end
