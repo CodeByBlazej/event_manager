@@ -26,13 +26,8 @@ end
 def clean_homePhone(homePhone)
   cleared_number = homePhone.delete('^0-9')
 
-  if cleared_number.size > 10 && cleared_number.start_with?('1') 
-    cleared_number.slice(1..10)
-  elsif cleared_number.size < 10
-    'We are sorry, the number you provided seems to be wrong...'
-  else
-    cleared_number
-  end
+  return 'We are sorry, the number you provided seems to be wrong...' if cleared_number.size < 10
+  cleared_number.size > 10 && cleared_number.start_with?('1') ? cleared_number[1..10] : cleared_number
 end
 
 def legislators_by_zipcode(zip)
