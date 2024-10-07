@@ -69,8 +69,10 @@ contents.each do |row|
   name = row[:first_name]
   zipcode = clean_zipcode(row[:zipcode])
   homePhone = clean_homePhone(row[:homephone])
+  regdate = row[:regdate]
   legislators = legislators_by_zipcode(zipcode)
 
   form_letter = erb_template.result(binding)
 
+  puts regdate
 end
