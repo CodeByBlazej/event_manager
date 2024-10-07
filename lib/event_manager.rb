@@ -74,5 +74,6 @@ contents.each do |row|
 
   form_letter = erb_template.result(binding)
 
-  puts regdate
+  p regdate.split(' ')[1]
+  # puts Time.parse(regdate)
 end
