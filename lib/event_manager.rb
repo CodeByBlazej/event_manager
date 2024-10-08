@@ -30,6 +30,12 @@ def clean_homePhone(homePhone)
   cleared_number.size > 10 && cleared_number.start_with?('1') ? cleared_number[1..10] : cleared_number
 end
 
+@all_hours = []
+def get_hours(regdate)
+  hour = @all_hours.push(Time.parse(regdate.split(' ')[1]).hour)
+
+end
+
 def legislators_by_zipcode(zip)
   civic_info = Google::Apis::CivicinfoV2::CivicInfoService.new
   civic_info.key = File.read('secret.key').strip
@@ -69,11 +75,16 @@ contents.each do |row|
   name = row[:first_name]
   zipcode = clean_zipcode(row[:zipcode])
   homePhone = clean_homePhone(row[:homephone])
-  regdate = row[:regdate]
+  hours = get_hours(row[:regdate])
   legislators = legislators_by_zipcode(zipcode)
 
   form_letter = erb_template.result(binding)
 
-  p regdate.split(' ')[1]
-  # puts Time.parse(regdate)
+  # date = regdate.split(" ")[0].insert(-3, '20')
+  # puts date
+
 end
+
+best_hours = @all_hours.uniq.select { |el| @all_hours.count(el) >= 3 }.sort
+p best_hours
+  
