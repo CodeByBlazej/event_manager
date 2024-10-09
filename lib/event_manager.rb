@@ -1,7 +1,7 @@
 require 'csv'
 require 'google/apis/civicinfo_v2'
 require 'erb'
-
+require 'time'
 
 
 contents = File.read('event_attendees.csv')
@@ -30,10 +30,11 @@ def clean_homePhone(homePhone)
   cleared_number.size > 10 && cleared_number.start_with?('1') ? cleared_number[1..10] : cleared_number
 end
 
-@all_hours = []
-def get_hours(regdate)
-  hour = @all_hours.push(Time.parse(regdate.split(' ')[1]).hour)
 
+def get_hours(regdate, all_hours)
+  hour = DateTime.strptime(regdate, '%m/%d/%y %H:%M').hour
+  all_hours << hour
+  # all_hours.push(Time.parse(regdate.split(' ')[1]).hour)
 end
 
 def legislators_by_zipcode(zip)
@@ -69,22 +70,27 @@ contents = CSV.open(
 
 template_letter = File.read('form_letter.erb')
 erb_template = ERB.new template_letter
+all_hours = []
 
 contents.each do |row|
   id = row[0]
   name = row[:first_name]
   zipcode = clean_zipcode(row[:zipcode])
   homePhone = clean_homePhone(row[:homephone])
-  hours = get_hours(row[:regdate])
+  hours = get_hours(row[:regdate], all_hours)
   legislators = legislators_by_zipcode(zipcode)
 
   form_letter = erb_template.result(binding)
 
+  # save_thank_you_letter(id,form_letter)
+  
   # date = regdate.split(" ")[0].insert(-3, '20')
   # puts date
 
 end
+peak_hours = all_hours.tally.sort_by { |hour, count| -count }
 
-best_hours = @all_hours.uniq.select { |el| @all_hours.count(el) >= 3 }.sort
-p best_hours
+peak_hours.each do |hour, count|
+  puts "Hour: #{hour} Times: #{count}"
+end
   
