@@ -34,7 +34,6 @@ end
 def get_hours(regdate, all_hours)
   hour = DateTime.strptime(regdate, '%m/%d/%y %H:%M').hour
   all_hours << hour
-  # all_hours.push(Time.parse(regdate.split(' ')[1]).hour)
 end
 
 def legislators_by_zipcode(zip)
@@ -93,4 +92,3 @@ peak_hours = all_hours.tally.sort_by { |hour, count| -count }
 peak_hours.each do |hour, count|
   puts "Hour: #{hour} Times: #{count}"
 end
-  
