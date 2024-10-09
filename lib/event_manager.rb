@@ -36,6 +36,11 @@ def get_hours(regdate, all_hours)
   all_hours << hour
 end
 
+def get_days(regdate, all_days)
+  day = DateTime.strptime(regdate, '%m/%d/%y %H:%M').wday
+  all_days << day
+end
+
 def legislators_by_zipcode(zip)
   civic_info = Google::Apis::CivicinfoV2::CivicInfoService.new
   civic_info.key = File.read('secret.key').strip
@@ -70,6 +75,7 @@ contents = CSV.open(
 template_letter = File.read('form_letter.erb')
 erb_template = ERB.new template_letter
 all_hours = []
+all_days = []
 
 contents.each do |row|
   id = row[0]
@@ -77,6 +83,7 @@ contents.each do |row|
   zipcode = clean_zipcode(row[:zipcode])
   homePhone = clean_homePhone(row[:homephone])
   hours = get_hours(row[:regdate], all_hours)
+  day = get_days(row[:regdate], all_days)
   legislators = legislators_by_zipcode(zipcode)
 
   form_letter = erb_template.result(binding)
@@ -91,4 +98,26 @@ peak_hours = all_hours.tally.sort_by { |hour, count| -count }
 
 peak_hours.each do |hour, count|
   puts "Hour: #{hour} Times: #{count}"
+end
+
+peak_days = all_days.tally.sort_by { |day, count| -count }
+
+peak_days.each do |day, count|
+  case day
+  when 0
+    puts "Day: Monday, Times: #{count}"
+  when 1
+    puts "Day: Tuesday, Times: #{count}"
+  when 2
+    puts "Day: Wednesday, Times: #{count}"
+  when 3
+    puts "Day: Thursday, Times: #{count}"
+  when 4
+    puts "Day: Friday, Times: #{count}"
+  when 5
+    puts "Day: Saturday, Times: #{count}"
+  when 6
+    puts "Day: Sunday, Times: #{count}"
+  end
+  # puts "Day: #{day} Times: #{count}"
 end
