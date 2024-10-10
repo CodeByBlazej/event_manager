@@ -2,6 +2,7 @@ require 'csv'
 require 'google/apis/civicinfo_v2'
 require 'erb'
 require 'time'
+require 'date'
 
 
 contents = File.read('event_attendees.csv')
@@ -16,7 +17,7 @@ lines.each_with_index do |line,index|
   puts name
 end
 
-
+# PROPER ASSIGNMENT STARTS HERE
 puts 'EventManager initialized.'
 
 def clean_zipcode(zipcode)
@@ -89,11 +90,8 @@ contents.each do |row|
   form_letter = erb_template.result(binding)
 
   # save_thank_you_letter(id,form_letter)
-  
-  # date = regdate.split(" ")[0].insert(-3, '20')
-  # puts date
-
 end
+
 peak_hours = all_hours.tally.sort_by { |hour, count| -count }
 
 peak_hours.each do |hour, count|
@@ -103,21 +101,7 @@ end
 peak_days = all_days.tally.sort_by { |day, count| -count }
 
 peak_days.each do |day, count|
-  case day
-  when 0
-    puts "Day: Monday, Times: #{count}"
-  when 1
-    puts "Day: Tuesday, Times: #{count}"
-  when 2
-    puts "Day: Wednesday, Times: #{count}"
-  when 3
-    puts "Day: Thursday, Times: #{count}"
-  when 4
-    puts "Day: Friday, Times: #{count}"
-  when 5
-    puts "Day: Saturday, Times: #{count}"
-  when 6
-    puts "Day: Sunday, Times: #{count}"
-  end
-  # puts "Day: #{day} Times: #{count}"
+  day_names = Date::DAYNAMES
+
+  puts "Day: #{day_names[day]}, Times: #{count}"
 end
